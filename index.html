@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Employee Details</title>
+        <script type="text/javascript" src="papaparse.min.js"></script>
+    </head>
+    <body>
+        
+        <input type="file" id="upload_csv" accept=".csv">
+        <button id="btn_upload_csv">Read csv</button>
+            <script type="text/javascript">
+            function display(val){
+                var depart = "A00 = "+val[1]+"\t"+val[2]+"\t"+val[3];
+                return depart;
+            
+            }
+            
+            let btn_upload = document.getElementById('btn_upload_csv').addEventListener('click',()=>{
+                Papa.parse(document.getElementById('upload_csv').files[0],{ 
+               // Papa.parse(url,{
+                    download: true,
+                    header: false,
+                    complete: function(results){ 
+                           var empdata = results.data;
+                           
+                           var res1 = empdata.filter(x => x[4]=="A00");
+                           //question 1 
+                           if (res1.length > 0){
+                            
+                                var ans1 = res1.map(display).toString().replaceAll(",","\n");
+                                console.log("***********answer1*****************")
+                                console.log(ans1);
+                            }
+                            //question 4
+                            if (empdata.length > 0){
+                            
+                            var ans4 = empdata.filter(function(x){
+                                return x[6] != null && x[6] != "HIRE_DATE" && x[6] != '' && x[6] != undefined;
+                            }).sort(function(o){
+                                let date = new Date(o[6]);
+                                
+                                if((date instanceof Date) && !isNaN(date))
+                                return date;
+                            }).map(function(x){
+                        
+                                var d = new Date(x[6]);
+                                var monthArra =["Jan","Feb","Mar","apr","may","jun","jul","Aug","Sep","Oct","Nov","Dec"]
+                                return x[1] + "\t" +d.getDate()+ " "+ monthArra[d.getMonth()] +" "+ d.getFullYear();
+                            }).reverse();
+                            console.log("***************answer 4***************")
+                            console.log(ans4.toString().replaceAll(",","\n"));
+                        }
+                       
+                    }
+                   
+                    
+                });
+            })
+            
+        </script>
+    </body>
+</html>
